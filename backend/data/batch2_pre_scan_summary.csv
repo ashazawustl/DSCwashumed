@@ -1,0 +1,11 @@
+filename,sex,reference_image,sample_area_cm2,bone_area_cm2,total_weight_g,soft_weight_g,lean_weight_g,fat_weight_g,fat_percent,BMC_g,BMD_mg_per_cm2
+B2_M_0 Pre-Scan.txt,Male,"B2_M_0 Pre-Scan",27.828,9.212,26.4998,25.8247,19.2367,6.5880,25.510,0.67514,73.286
+B2_M_1 Pre-Scan.txt,Male,"B2_M_1 Pre-Scan",30.886,9.327,30.3463,29.6736,21.8478,7.8258,26.373,0.67271,72.125
+B2_M_2 Pre-Scan.txt,Male,"B2_M_2 Pre-Scan",31.799,9.308,30.0257,29.3620,19.8097,9.5523,32.533,0.66367,71.304
+B2_M_3 Pre-Scan.txt,Male,"B2_M_3 Pre-Scan",31.313,9.061,31.0387,30.3784,20.1089,10.2695,33.805,0.66028,72.873
+B2_M_4 Pre-Scan.txt,Male,"B2_M_4 Pre-Scan",30.196,8.870,29.3860,28.7646,21.3238,7.4408,25.868,0.62137,70.056
+B2_F_0 Pre-Scan.txt,Female,"B2_F_0 Pre-Scan",27.093,7.963,22.5412,22.0361,13.2859,8.7502,39.708,0.50510,63.429
+B2_F_1 Pre-Scan.txt,Female,"B2_F_1 Pre-Scan",28.961,9.370,27.7358,27.0752,16.4204,10.6548,39.353,0.66057,70.499
+B2_F_2 Pre-Scan.txt,Female,"B2_F_2 Pre-Scan",27.508,9.268,26.2425,25.6099,14.3603,11.2496,43.927,0.63265,68.258
+B2_F_3 Pre-Scan.txt,Female,"B2_F_3 Pre-Scan",30.672,9.243,28.7504,28.1500,16.4967,11.6533,41.397,0.60035,64.95
+B2_F_4 Pre-Scan.txt,Female,"B2_F_4 Pre-Scan",29.730,8.999,27.6755,27.0616,16.5638,10.4978,38.792,0.61393,68.22
