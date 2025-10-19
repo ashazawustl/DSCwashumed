@@ -1,28 +1,41 @@
 // SVG Size
-var width = 1000,
-    height = 700;
+let width = window.innerWidth;
+let height = window.innerHeight;
 
-// Test that D3 is working first
+// Test that D3 is working
 console.log("D3 version:", d3.version);
 
+const container = d3.select("#chart-area");
+
 // Create SVG container
-const svg = d3.select("#chart-area")
+const svg = container
     .append("svg")
     .attr("width", width)
-    .attr("height", height);
+    .attr("height", height)
+    .attr("viewBox", [0, 0, width, height])
+    .attr("preserveAspectRatio", "xMidYMid meet");
 
-/*All 24 mouse samples from your real data - hard coded
-take the data for each field form the cleaned version of the data (done by Hans & Andrew)*/
+// Handle window resizing dynamically
+window.addEventListener("resize", function () {
+    width = window.innerWidth;
+    height = window.innerHeight;
+    svg
+        .attr("width", width)
+        .attr("height", height)
+        .attr("viewBox", [0, 0, width, height]);
+});
 
-//clean the data to include only the numerical portion for later relationship building
+// Helper to clean numeric data
 function parseNumeric(value) {
     if (!value) return undefined;
     const numeric = value.toString().match(/[\d.]+/);
     return numeric ? parseFloat(numeric[0]) : undefined;
 }
 
+// Load mouse dataset
 d3.csv("/backend/data/Review_SY-08002944_4_3_2025 10_31_21_cleaned.csv").then(mouseData => {
-    // Parse and convert numerical values
+
+    // Parse and convert values
     mouseData.forEach(d => {
         d.sampleId = d["Sample ID"];
         d.patientId = d["Patient ID"];
@@ -47,12 +60,13 @@ d3.csv("/backend/data/Review_SY-08002944_4_3_2025 10_31_21_cleaned.csv").then(mo
         d.pltMessage = d["PLT Message"];
     });
 
-    // Temporal sequence (samples taken in chronological order)
+    // Build relationships
     const relationships = [];
     const sorted = [...mouseData].sort(
         (a, b) => new Date(`${a.date} ${a.time}`) - new Date(`${b.date} ${b.time}`)
     );
 
+    // Temporal sequence
     for (let i = 0; i < sorted.length - 1; i++) {
         relationships.push({
             source: sorted[i].sampleId,
@@ -62,11 +76,11 @@ d3.csv("/backend/data/Review_SY-08002944_4_3_2025 10_31_21_cleaned.csv").then(mo
         });
     }
 
-    //for WBC relationship
+    // Similar WBC
     for (let i = 0; i < mouseData.length; i++) {
         for (let j = i + 1; j < mouseData.length; j++) {
             const wbcDiff = Math.abs(mouseData[i].wbc - mouseData[j].wbc);
-            if (wbcDiff <= 1.0) {   //threshold for "similar" WBC
+            if (wbcDiff <= 1.0) {
                 relationships.push({
                     source: mouseData[i].sampleId,
                     target: mouseData[j].sampleId,
@@ -77,10 +91,9 @@ d3.csv("/backend/data/Review_SY-08002944_4_3_2025 10_31_21_cleaned.csv").then(mo
         }
     }
 
-    //for higher WBC (leukocytosis)
-    const highWbcThreshold = 12.0; // cutoff for leukocytosis
+    // High WBC (leukocytosis)
+    const highWbcThreshold = 12.0;
     const highWbcSamples = mouseData.filter(d => d.wbc >= highWbcThreshold);
-
     for (let i = 0; i < highWbcSamples.length; i++) {
         for (let j = i + 1; j < highWbcSamples.length; j++) {
             relationships.push({
@@ -94,29 +107,6 @@ d3.csv("/backend/data/Review_SY-08002944_4_3_2025 10_31_21_cleaned.csv").then(mo
 
     console.log("Mouse data:", mouseData);
     console.log("Relationships:", relationships);
-    console.log("Total samples:", mouseData.length);
-    console.log("Total relationships:", relationships.length);
-
-    // Tooltip div
-    const tooltip = d3.select("body")
-        .append("div")
-        .attr("class", "tooltip")
-        .style("position", "fixed")
-        .style("background", "rgba(0, 0, 0, 0.95)")
-        .style("color", "white")
-        .style("padding", "20px")
-        .style("border-radius", "10px")
-        .style("border", "2px solid #666")
-        .style("font-size", "12px")
-        .style("max-width", "450px")
-        .style("max-height", "600px")
-        .style("overflow-y", "auto")
-        .style("display", "none")
-        .style("z-index", "1000")
-        .style("box-shadow", "0 4px 20px rgba(0,0,0,0.5)");
-
-    let tooltipVisible = false;
-    let currentSelectedNode = null;
 
     // Force simulation
     const simulation = d3.forceSimulation(mouseData)
@@ -124,21 +114,24 @@ d3.csv("/backend/data/Review_SY-08002944_4_3_2025 10_31_21_cleaned.csv").then(mo
             .id(d => d.sampleId)
             .distance(d => {
                 switch (d.type) {
-                    case "temporal_proximity": return 60;
-                    case "leukocytosis_group": return 40;
-                    case "leukopenia_group": return 30;
-                    case "anemia_group": return 35;
-                    case "same_operator": return 80;
-                    case "similar_wbc": return 50;
-                    default: return 70;
+                    case "temporal_proximity": return 100; 
+                    case "leukocytosis_group": return 90;
+                    case "similar_wbc": return 95;
+                    default: return 110;
                 }
             })
-            .strength(d => d.strength || 0.5))
-        .force("charge", d3.forceManyBody().strength(-200))
-        .force("center", d3.forceCenter(width/2, height/2))
-        .force("collision", d3.forceCollide().radius(25));
+            .strength(d => d.strength || 0.45))
+        .force("charge", d3.forceManyBody().strength(-400))
+        .force("center", d3.forceCenter(width / 2, height / 2))
+        .force("collision", d3.forceCollide().radius(45))
+        .force("x", d3.forceX(width / 2).strength(0.04))
+        .force("y", d3.forceY(height / 2).strength(0.04));
 
-    // Relationship lines
+    window.addEventListener("resize", () => {
+        simulation.force("center", d3.forceCenter(window.innerWidth / 2, window.innerHeight / 2));
+    });
+
+    // Draw links
     const link = svg.append("g")
         .attr("class", "links")
         .selectAll("line")
@@ -148,7 +141,6 @@ d3.csv("/backend/data/Review_SY-08002944_4_3_2025 10_31_21_cleaned.csv").then(mo
             switch (d.type) {
                 case "temporal_proximity": return "#999";
                 case "leukocytosis_group": return "#ff6b6b";
-                case "leukopenia_group": return "#4ecdc4";
                 case "similar_wbc": return "#ff9ff3";
                 default: return "#999";
             }
@@ -156,7 +148,7 @@ d3.csv("/backend/data/Review_SY-08002944_4_3_2025 10_31_21_cleaned.csv").then(mo
         .attr("stroke-width", d => Math.sqrt(d.strength * 3))
         .attr("stroke-opacity", 0.6);
 
-    // Sample nodes
+    // Draw nodes
     const node = svg.append("g")
         .attr("class", "nodes")
         .selectAll("circle")
@@ -164,11 +156,11 @@ d3.csv("/backend/data/Review_SY-08002944_4_3_2025 10_31_21_cleaned.csv").then(mo
         .enter().append("circle")
         .attr("r", 15)
         .style("fill", d => {
-            if (d.wbc > 15) return "#ff4757"; // Very high WBC
-            if (d.wbc > 12) return "#ff6b6b"; // High WBC
-            if (d.wbc > 8) return "#95e1d3"; // Normal
-            if (d.wbc > 3) return "#4ecdc4"; // Low
-            return "#2f3542";                 // Very low
+            if (d.wbc > 15) return "#ff4757";
+            if (d.wbc > 12) return "#ff6b6b";
+            if (d.wbc > 8) return "#95e1d3";
+            if (d.wbc > 3) return "#4ecdc4";
+            return "#2f3542";
         })
         .style("stroke", "#333")
         .style("stroke-width", 2)
@@ -176,36 +168,9 @@ d3.csv("/backend/data/Review_SY-08002944_4_3_2025 10_31_21_cleaned.csv").then(mo
         .call(d3.drag()
             .on("start", dragstarted)
             .on("drag", dragged)
-            .on("end", dragended))
-        .on("mouseover", function (event, d) {
-            if (currentSelectedNode !== d3.select(this)) {
-                d3.select(this).transition().attr("r", 18);
-            }
-        })
-        .on("mouseout", function (event, d) {
-            if (currentSelectedNode !== d3.select(this)) {
-                d3.select(this).transition().attr("r", 15);
-            }
-        })
-        .on("click", function (event, d) {
-            console.log("Clicked sample:", d);
+            .on("end", dragended));
 
-            if (tooltipVisible && currentSelectedNode === d3.select(this)) {
-                hideTooltip();
-                return;
-            }
-
-            if (currentSelectedNode) {
-                currentSelectedNode.transition().attr("r", 15).style("stroke-width", 2);
-            }
-
-            currentSelectedNode = d3.select(this);
-            currentSelectedNode.transition().attr("r", 20).style("stroke-width", 4);
-
-            showTooltip(d);
-        });
-
-    // Labels
+    // Node labels
     const label = svg.append("g")
         .attr("class", "labels")
         .selectAll("text")
@@ -219,7 +184,7 @@ d3.csv("/backend/data/Review_SY-08002944_4_3_2025 10_31_21_cleaned.csv").then(mo
         .style("font-weight", "bold")
         .style("pointer-events", "none");
 
-    // Simulation tick update
+    // Simulation tick
     simulation.on("tick", () => {
         link
             .attr("x1", d => d.source.x)
@@ -236,7 +201,7 @@ d3.csv("/backend/data/Review_SY-08002944_4_3_2025 10_31_21_cleaned.csv").then(mo
             .attr("y", d => d.y);
     });
 
-    // Dragging behavior
+    // Drag behavior
     function dragstarted(event, d) {
         if (!event.active) simulation.alphaTarget(0.3).restart();
         d.fx = d.x;
@@ -254,85 +219,84 @@ d3.csv("/backend/data/Review_SY-08002944_4_3_2025 10_31_21_cleaned.csv").then(mo
         d.fy = null;
     }
 
-    // Tooltip table
-    function createMouseTable(d) {
-        let tableHTML = `
-            <h3 style="margin-top: 0; text-align: center; color: #fff;">Sample: ${d.sampleId}</h3>
-            <table style="width: 100%; border-collapse: collapse; color: white;">
-                <tr style="border-bottom: 2px solid #666;">
-                    <td style="padding: 8px; font-weight: bold;">Field</td>
-                    <td style="padding: 8px; font-weight: bold;">Value</td>
-                    <td style="padding: 8px; font-weight: bold;">Unit</td>
-                </tr>
-        `;
+    // --- SLIDE-IN PANEL LOGIC ---
+    const dataPanel = d3.select("#data-panel");
+    const dataContent = d3.select("#data-content");
+    const closePanel = d3.select("#close-panel");
 
-        // Blood cell counts
-        tableHTML += `
-            <tr><td colspan="3" style="background: #444; padding: 8px; font-weight: bold;">Blood Cell Counts</td></tr>
-            <tr><td>WBC</td><td>${d.wbc}</td><td>10³/uL</td></tr>
-            <tr><td>Neutrophils</td><td>${d.neutrophils}</td><td>10³/uL</td></tr>
-            <tr><td>Lymphocytes</td><td>${d.lymphocytes}</td><td>10³/uL</td></tr>
-            <tr><td>Monocytes</td><td>${d.monocytes}</td><td>10³/uL</td></tr>
-            <tr><td>Eosinophils</td><td>${d.eosinophils}</td><td>10³/uL</td></tr>
-            <tr><td>Basophils</td><td>${d.basophils}</td><td>10³/uL</td></tr>
-        `;
+    let currentSelectedNode = null;
 
-        // RBC
-        tableHTML += `
-            <tr><td colspan="3" style="background: #444; padding: 8px; font-weight: bold;">Red Blood Cells</td></tr>
-            <tr><td>RBC</td><td>${d.rbc}</td><td>10⁶/uL</td></tr>
-            <tr><td>Hemoglobin</td><td>${d.hemoglobin}</td><td>g/dL</td></tr>
-            <tr><td>Hematocrit</td><td>${d.hematocrit}</td><td>%</td></tr>
-            <tr><td>Platelets</td><td>${d.platelets}</td><td>10³/uL</td></tr>
-        `;
+    closePanel.on("click", () => hidePanel());
 
-        // Sample info
-        tableHTML += `
-            <tr><td colspan="3" style="background: #444; padding: 8px; font-weight: bold;">Sample Information</td></tr>
-            <tr><td>Date</td><td>${d.date}</td><td></td></tr>
-            <tr><td>Time</td><td>${d.time}</td><td></td></tr>
-            <tr><td>Operator</td><td>${d.operator}</td><td></td></tr>
-        `;
-
-        if (d.wbcMessage) {
-            tableHTML += `
-                <tr><td colspan="3" style="background: #444; padding: 8px; font-weight: bold;">Medical Notes</td></tr>
-                <tr><td colspan="3" style="padding: 8px; background: #333;">${d.wbcMessage}</td></tr>
-            `;
-        }
-
-        tableHTML += `</table>
-            <div style="margin-top: 15px; text-align: center;">
-                <button onclick="hideTooltip()" style="padding: 8px 20px; background: #666; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 14px;">Close</button>
-            </div>
-        `;
-
-        return tableHTML;
-    }
-
-    // Tooltip functions
-    window.hideTooltip = function () {
-        tooltip.style("display", "none");
-        tooltipVisible = false;
-
+    function hidePanel() {
+        dataPanel.classed("active", false);
         if (currentSelectedNode) {
             currentSelectedNode.transition().attr("r", 15).style("stroke-width", 2);
             currentSelectedNode = null;
         }
-    };
-
-    function showTooltip(d) {
-        tooltip.html(createMouseTable(d))
-            .style("display", "block")
-            .style("left", "80%")
-            .style("top", "50%")
-            .style("transform", "translate(-50%, -50%)");
-        tooltipVisible = true;
     }
 
-    // Legend
-    const legend = svg.append("g")
-        .attr("transform", "translate(20, 20)");
+    function showPanel(d) {
+        dataContent.html(createMouseTable(d));
+        dataPanel.classed("active", true);
+    }
+
+    // Node click → open panel
+    node.on("click", function (event, d) {
+        console.log("Clicked sample:", d);
+
+        if (dataPanel.classed("active") && currentSelectedNode === d3.select(this)) {
+            hidePanel();
+            return;
+        }
+
+        if (currentSelectedNode) {
+            currentSelectedNode.transition().attr("r", 15).style("stroke-width", 2);
+        }
+        currentSelectedNode = d3.select(this);
+        currentSelectedNode.transition().attr("r", 20).style("stroke-width", 4);
+
+        showPanel(d);
+    });
+
+    // --- DATA TABLE BUILDER ---
+    function createMouseTable(d) {
+        let tableHTML = `
+            <h3>Sample: ${d.sampleId}</h3>
+            <table>
+                <tr><td class="section-header" colspan="3">Blood Cell Counts</td></tr>
+                <tr><td>WBC</td><td>${d.wbc}</td><td>10³/uL</td></tr>
+                <tr><td>Neutrophils</td><td>${d.neutrophils}</td><td>10³/uL</td></tr>
+                <tr><td>Lymphocytes</td><td>${d.lymphocytes}</td><td>10³/uL</td></tr>
+                <tr><td>Monocytes</td><td>${d.monocytes}</td><td>10³/uL</td></tr>
+                <tr><td>Eosinophils</td><td>${d.eosinophils}</td><td>10³/uL</td></tr>
+                <tr><td>Basophils</td><td>${d.basophils}</td><td>10³/uL</td></tr>
+
+                <tr><td class="section-header" colspan="3">Red Blood Cells</td></tr>
+                <tr><td>RBC</td><td>${d.rbc}</td><td>10⁶/uL</td></tr>
+                <tr><td>Hemoglobin</td><td>${d.hemoglobin}</td><td>g/dL</td></tr>
+                <tr><td>Hematocrit</td><td>${d.hematocrit}</td><td>%</td></tr>
+                <tr><td>Platelets</td><td>${d.platelets}</td><td>10³/uL</td></tr>
+
+                <tr><td class="section-header" colspan="3">Sample Information</td></tr>
+                <tr><td>Date</td><td>${d.date}</td><td></td></tr>
+                <tr><td>Time</td><td>${d.time}</td><td></td></tr>
+                <tr><td>Operator</td><td>${d.operator}</td><td></td></tr>
+        `;
+
+        if (d.wbcMessage) {
+            tableHTML += `
+                <tr><td class="section-header" colspan="3">Medical Notes</td></tr>
+                <tr><td colspan="3" style="background:#222;">${d.wbcMessage}</td></tr>
+            `;
+        }
+
+        tableHTML += `</table>`;
+        return tableHTML;
+    }
+
+    // --- LEGEND ---
+    const legend = svg.append("g").attr("transform", "translate(20, 20)");
 
     const legendData = [
         { color: "#ff6b6b", label: "High WBC" },
@@ -354,9 +318,7 @@ d3.csv("/backend/data/Review_SY-08002944_4_3_2025 10_31_21_cleaned.csv").then(mo
             .attr("y", i * 20 + 4)
             .text(item.label)
             .style("font-size", "11px")
-            .style("fill", "#333");
+            .style("fill", "#fff");
     });
 
-    // Initialize graph
-    initGraph(mouseData, relationships);
 });
