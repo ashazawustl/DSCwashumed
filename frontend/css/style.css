@@ -1,31 +1,31 @@
 /**** ADD YOUR STYLES ****/
 .bar {
-  fill: #3C948B;
+	fill: #3C948B;
 }
 
 .bar:hover {
-  fill: #327972;
+	fill: #327972;
 }
 
 .axis {
-  font: 10px sans-serif;
+	font: 10px sans-serif;
 }
 
 .axis path,
 .axis line,
 .domain {
-  fill: none;
-  stroke: #888;
-  shape-rendering: crispEdges;
+	fill: none;
+	stroke: #888;
+	shape-rendering: crispEdges;
 }
 
 #chart-area text {
-  font-size: 11px;
+	font-size: 11px;
 }
 
 .axis-label {
-  fill: #888;
-  font-size: 10px;
+	fill: #888;
+	font-size: 10px;
 }
 
 /* css/style.css
@@ -56,7 +56,7 @@ h1 {
 	color: #ffffff;
 	margin: 20px auto;
 	padding-bottom: 10px;
-	border-bottom: 2px solid rgba(255,255,255,0.2);
+	border-bottom: 2px solid rgba(255, 255, 255, 0.2);
 	display: inline-block;
 }
 
@@ -71,7 +71,8 @@ h1 {
 #data-panel {
 	position: fixed;
 	top: 0;
-	right: -420px; /* hidden offscreen */
+	right: -420px;
+	/* hidden offscreen */
 	width: 400px;
 	height: 100vh;
 	background: rgba(25, 25, 25, 0.98);
@@ -84,7 +85,8 @@ h1 {
 }
 
 #data-panel.active {
-	right: 0; /* slides in */
+	right: 0;
+	/* slides in */
 }
 
 #panel-content {
@@ -125,11 +127,11 @@ h1 {
 }
 
 #data-content tr:nth-child(even) {
-	background-color: rgba(255,255,255,0.05);
+	background-color: rgba(255, 255, 255, 0.05);
 }
 
 #data-content tr:hover {
-	background-color: rgba(60,148,139,0.2);
+	background-color: rgba(60, 148, 139, 0.2);
 }
 
 #data-content .section-header {
@@ -148,4 +150,39 @@ h1 {
 #data-panel::-webkit-scrollbar-thumb {
 	background-color: #3C948B;
 	border-radius: 4px;
+}
+
+
+#dexa-upload-btn {
+	background-color: #007bff;
+	color: white;
+	border: none;
+	padding: 10px 20px;
+	border-radius: 6px;
+	cursor: pointer;
+	font-size: 1rem;
+	transition: background-color 0.3s ease;
+}
+
+#dexa-upload-btn:hover {
+	background-color: #0056b3;
+}
+
+#filter-controls {
+	background-color: #222;
+	color: white;
+	padding: 10px;
+	border-radius: 8px;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 10px;
+}
+
+#filter-controls select,
+#filter-controls input,
+#filter-controls button {
+	border-radius: 4px;
+	padding: 4px 8px;
+	font-size: 0.9rem;
 }
