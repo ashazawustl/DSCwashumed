@@ -270,4 +270,45 @@ d3.csv("/backend/data/Review_SY-08002944_4_3_2025 10_31_21_cleaned.csv").then(mo
         }
 
         const filteredNodes = originalNodes.filter(d => {
-     
+            const val = d[metric];
+            if (val == null) return false;
+            if (!isNaN(minVal) && val < minVal) return false;
+            if (!isNaN(maxVal) && val > maxVal) return false;
+            return true;
+        });
+
+        const filteredLinks = [];
+        const proximityThreshold = d3.max(filteredNodes, d => d[metric]) - d3.min(filteredNodes, d => d[metric]);
+        const colorScale = d3.scaleSequential(d3.interpolateRdYlBu).domain([0, proximityThreshold]);
+
+        for (let i = 0; i < filteredNodes.length; i++) {
+            for (let j = i + 1; j < filteredNodes.length; j++) {
+                const a = filteredNodes[i][metric];
+                const b = filteredNodes[j][metric];
+                if (a != null && b != null) {
+                    const diff = Math.abs(a - b);
+                    filteredLinks.push({
+                        source: filteredNodes[i].sampleId,
+                        target: filteredNodes[j].sampleId,
+                        diff,
+                        color: colorScale(diff),
+                        strength: 1 - (diff / proximityThreshold)
+                    });
+                }
+            }
+        }
+
+        updateGraph(filteredNodes, filteredLinks, metric);
+    }
+
+    function resetFilter() {
+        filterType.value = "all";
+        filterMin.value = "";
+        filterMax.value = "";
+        updateGraph(originalNodes, []);
+    }
+
+    applyFilterBtn.addEventListener("click", applyFilter);
+    resetFilterBtn.addEventListener("click", resetFilter);
+
+});

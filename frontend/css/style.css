@@ -150,3 +150,54 @@ h1 {
 #data-panel::-webkit-scrollbar-thumb {
 	background-color: #3C948B;
 	border-radius: 4px;
+}
+
+
+#dexa-upload-btn {
+	background-color: #007bff;
+	color: white;
+	border: none;
+	padding: 10px 20px;
+	border-radius: 6px;
+	cursor: pointer;
+	font-size: 1rem;
+	transition: background-color 0.3s ease;
+}
+
+#dexa-upload-btn:hover {
+	background-color: #0056b3;
+}
+
+#stats-tests-btn {
+	background-color: #007bff;
+	color: white;
+	border: none;
+	padding: 10px 20px;
+	border-radius: 6px;
+	cursor: pointer;
+	font-size: 1rem;
+	transition: background-color 0.3s ease;
+}
+
+#stats-tests-btn:hover {
+	background-color: #0056b3;
+}
+
+#filter-controls {
+	background-color: #222;
+	color: white;
+	padding: 10px;
+	border-radius: 8px;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 10px;
+}
+
+#filter-controls select,
+#filter-controls input,
+#filter-controls button {
+	border-radius: 4px;
+	padding: 4px 8px;
+	font-size: 0.9rem;
+}
