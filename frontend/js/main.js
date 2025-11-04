@@ -181,7 +181,12 @@ d3.csv("/backend/data/Review_SY-08002944_4_3_2025 10_31_21_cleaned.csv").then(mo
             .attr("stroke-width", 1.8)
             .style("cursor", "pointer")
             .on("click", function (event, d) {
-                showPanel(d, d3.select(this));
+                const remove = confirm(`Remove sample ${d.sampleId} from graph?`);
+                if (remove) {
+                    NodeRemoval(event, d);
+                } else {
+                    showPanel(d, d3.select(this));
+                }
             })
             .call(d3.drag()
                 .on("start", dragstarted)
@@ -251,6 +256,30 @@ d3.csv("/backend/data/Review_SY-08002944_4_3_2025 10_31_21_cleaned.csv").then(mo
             <tr><td>Time</td><td>${d.time}</td></tr>
         </table>`;
     }
+    // --- REMOVING NODES ---
+    let excludedNodes = new Set();
+    function NodeRemoval(event, d){
+        excludedNodes.add(d.sampleId);
+        const filteredNodes = originalNodes.filter(n => !excludedNodes.has(n.sampleId));
+        const filteredLinks = originalLinks.filter(l => !excludedNodes.has(l.source) && !excludedNodes.has(l.target));
+        updateGraph(filteredNodes, filteredLinks);
+        fetch("http://127.0.0.1:9000/update_exclusions", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ excluded_samples: Array.from(excludedNodes) })
+        }
+        )
+        .then(response => response.json())
+        .then(data => {
+            console.log("Exclusion update response:", data);
+        })
+        .catch(error => {
+            console.error("Error updating exclusions:", error);
+        });
+    }
+
+
+
 
     // --- FILTERING ---
     const filterType = document.getElementById("filterType");

@@ -1,6 +1,7 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify,request
 import subprocess
-
+import json
+import requests
 app = Flask(__name__)
 
 @app.route("/run-correlation", methods=["GET"])
@@ -13,3 +14,11 @@ def run_correlation():
         return jsonify({"status": "success", "message": "Pearson/Spearman notebook executed successfully."})
     except subprocess.CalledProcessError as e:
         return jsonify({"status": "error", "message": str(e)}), 500
+
+@app.route('/update_exclutions', methods=['POST'])
+def update_exclusions():
+    data = request.get_json()
+    exclusions = data.get('exclusions', [])
+    with open('excluded_nodes.json', 'w') as f:
+        json.dump(exclusions, f)
+    return jsonify({"status": "success", "message": "Exclusions updated successfully."})
