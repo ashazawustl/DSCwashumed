@@ -28,27 +28,19 @@
 	font-size: 10px;
 }
 
-/* css/style.css
-   Cute pastel theme for "Bio Research Data Visualization"
-   Drop this file into css/style.css and refresh the page.
-*/
-
-/* Optional: if you want a Google font, add this line to your HTML <head>:
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
-*/
-
 /* General layout */
 body {
 	background: radial-gradient(circle at center, #81e0e9, #106268);
 	color: #fff;
 	font-family: 'Helvetica Neue', sans-serif;
 	margin: 0;
-	overflow: hidden;
+	overflow-x: hidden;
 }
 
 .container {
 	text-align: center;
 	position: relative;
+	padding: 20px;
 }
 
 h1 {
@@ -60,11 +52,165 @@ h1 {
 	display: inline-block;
 }
 
-/* SVG area styling */
+/* Chart area - with proper height to prevent overflow */
+#chart-area {
+	width: 100%;
+	height: calc(100vh - 450px);
+	min-height: 500px;
+	max-height: 750px;
+	margin: 20px auto;
+	border-radius: 12px;
+	overflow: hidden;
+	background: rgba(0, 0, 0, 0.3);
+	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
 #chart-area svg {
 	display: block;
 	margin: 0 auto;
 	background: transparent;
+}
+
+/* Combined Controls Bar */
+#controls-bar {
+	background-color: rgba(34, 34, 34, 0.95);
+	color: white;
+	padding: 20px;
+	border-radius: 8px;
+	margin-bottom: 20px;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+	display: flex;
+	flex-direction: column;
+	gap: 15px;
+}
+
+.control-section {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 10px;
+	padding-bottom: 15px;
+	border-bottom: 1px solid rgba(129, 224, 233, 0.2);
+}
+
+.control-section:last-child {
+	border-bottom: none;
+	padding-bottom: 0;
+}
+
+.control-section label {
+	margin-right: 8px;
+	font-weight: 600;
+	color: #81e0e9;
+}
+
+.control-section select,
+.control-section input {
+	border-radius: 4px;
+	padding: 6px 10px;
+	font-size: 0.9rem;
+	border: 1px solid #3C948B;
+	background: rgba(255, 255, 255, 0.9);
+	color: #333;
+	margin-right: 8px;
+}
+
+.control-section button {
+	border-radius: 4px;
+	padding: 6px 12px;
+	font-size: 0.9rem;
+	border: none;
+	cursor: pointer;
+	transition: all 0.3s ease;
+	margin-right: 8px;
+	font-weight: 600;
+}
+
+#applyFilterBtn,
+#applyGroupingBtn {
+	background-color: #3C948B;
+	color: white;
+}
+
+#applyFilterBtn:hover,
+#applyGroupingBtn:hover {
+	background-color: #2d7169;
+	transform: translateY(-2px);
+	box-shadow: 0 4px 8px rgba(60, 148, 139, 0.4);
+}
+
+#addGroupBtn {
+	background-color: #28a745;
+	color: white;
+}
+
+#addGroupBtn:hover {
+	background-color: #218838;
+	transform: translateY(-2px);
+	box-shadow: 0 4px 8px rgba(40, 167, 69, 0.4);
+}
+
+#resetFilterBtn,
+#clearGroupsBtn {
+	background-color: #dc3545;
+	color: white;
+}
+
+#resetFilterBtn:hover,
+#clearGroupsBtn:hover {
+	background-color: #c82333;
+	transform: translateY(-2px);
+	box-shadow: 0 4px 8px rgba(220, 53, 69, 0.4);
+}
+
+/* Group Ranges Container */
+#groupRanges {
+	margin-top: 15px;
+	max-height: 300px;
+	overflow-y: auto;
+	padding: 5px;
+}
+
+.group-range-input {
+	background: rgba(255, 255, 255, 0.1);
+	padding: 12px;
+	margin-bottom: 10px;
+	border-radius: 6px;
+	border: 1px solid rgba(60, 148, 139, 0.3);
+	animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+	from {
+		opacity: 0;
+		transform: translateX(-20px);
+	}
+	to {
+		opacity: 1;
+		transform: translateX(0);
+	}
+}
+
+.group-range-input label {
+	margin-left: 10px;
+}
+
+.group-range-input input {
+	width: 80px;
+}
+
+.group-range-input .remove-group-btn {
+	background-color: #dc3545;
+	color: white;
+	padding: 5px 10px;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+	font-size: 0.85rem;
+}
+
+.group-range-input .remove-group-btn:hover {
+	background-color: #c82333;
 }
 
 /* Slide-in data panel */
@@ -72,7 +218,6 @@ h1 {
 	position: fixed;
 	top: 0;
 	right: -420px;
-	/* hidden offscreen */
 	width: 400px;
 	height: 100vh;
 	background: rgba(25, 25, 25, 0.98);
@@ -86,7 +231,6 @@ h1 {
 
 #data-panel.active {
 	right: 0;
-	/* slides in */
 }
 
 #panel-content {
@@ -143,61 +287,67 @@ h1 {
 }
 
 /* Scrollbar style */
-#data-panel::-webkit-scrollbar {
+#data-panel::-webkit-scrollbar,
+#groupRanges::-webkit-scrollbar {
 	width: 8px;
 }
 
-#data-panel::-webkit-scrollbar-thumb {
+#data-panel::-webkit-scrollbar-thumb,
+#groupRanges::-webkit-scrollbar-thumb {
 	background-color: #3C948B;
 	border-radius: 4px;
 }
 
-
-#dexa-upload-btn {
-	background-color: #007bff;
-	color: white;
-	border: none;
-	padding: 10px 20px;
-	border-radius: 6px;
-	cursor: pointer;
-	font-size: 1rem;
-	transition: background-color 0.3s ease;
+#data-panel::-webkit-scrollbar-track,
+#groupRanges::-webkit-scrollbar-track {
+	background-color: rgba(255, 255, 255, 0.1);
 }
 
-#dexa-upload-btn:hover {
-	background-color: #0056b3;
+/* Navigation buttons */
+.button-link {
+	text-decoration: none;
+	display: inline-block;
+	margin-right: 10px;
 }
 
+#dexa-upload-btn,
 #stats-tests-btn {
-	background-color: #007bff;
+	background-color: #3C948B;
 	color: white;
 	border: none;
 	padding: 10px 20px;
 	border-radius: 6px;
 	cursor: pointer;
 	font-size: 1rem;
-	transition: background-color 0.3s ease;
+	transition: all 0.3s ease;
+	font-weight: 600;
 }
 
+#dexa-upload-btn:hover,
 #stats-tests-btn:hover {
-	background-color: #0056b3;
+	background-color: #2d7169;
+	transform: translateY(-2px);
+	box-shadow: 0 4px 12px rgba(60, 148, 139, 0.4);
 }
 
-#filter-controls {
-	background-color: #222;
-	color: white;
-	padding: 10px;
-	border-radius: 8px;
-	display: flex;
-	flex-wrap: wrap;
-	align-items: center;
-	gap: 10px;
-}
+/* Responsive design */
+@media (max-width: 768px) {
+	#chart-area {
+		height: calc(100vh - 600px);
+		min-height: 400px;
+	}
 
-#filter-controls select,
-#filter-controls input,
-#filter-controls button {
-	border-radius: 4px;
-	padding: 4px 8px;
-	font-size: 0.9rem;
+	#data-panel {
+		width: 100%;
+		right: -100%;
+	}
+
+	#filter-controls,
+	#grouping-controls {
+		padding: 10px;
+	}
+
+	h1 {
+		font-size: 1.4em;
+	}
 }
