@@ -1,0 +1,37 @@
+import os
+import fitz
+import google.generativeai as genai
+
+
+KEY="sk-YourAPIKeyHere"
+PDF_PATH="backend/data/Review_SY-08002944_4_3_2025 10_31_21_cleaned.csv"
+genai.configure(api_key=KEY)
+model=genai.GenerativeModel('gemini-pro')
+
+def read_text(PDF_PATH):
+    doc = fitz.open(PDF_PATH)
+    text = ""
+    for page in doc:
+        text += page.get_text()
+    return text.strip()
+
+def extract_text():
+    pdf_text = read_text(PDF_PATH)
+
+    prompt = f"""
+    You are a data extraction system. Parse the following lab report text into structured JSON.
+    Include fields like 'Patient ID', 'Sample ID', 'Test Date', and any numeric blood metrics.
+    Output valid JSON only, no commentary.
+
+    --- PDF TEXT START ---
+    {pdf_text[:10000]}
+    --- PDF TEXT END ---
+    """
+
+    response = model.generate_content(prompt)
+    print(response.text)
+
+    # Optional: save output
+    with open("gemini_extracted.json", "w") as f:
+        f.write(response.text)
+
