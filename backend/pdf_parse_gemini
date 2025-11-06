@@ -3,7 +3,7 @@ import fitz
 import google.generativeai as genai
 
 
-KEY="AIzaSyA96Asr9ugSkJodajBd_v-yfCEoL6hzpfc"
+KEY="sk-**************************"
 PDF_PATH="data/2025.01.14+-+CBC+(1)-ocr.pdf"
 genai.configure(api_key=KEY)
 model=genai.GenerativeModel('gemini-2.5-flash')
