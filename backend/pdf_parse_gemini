@@ -3,10 +3,10 @@ import fitz
 import google.generativeai as genai
 
 
-KEY="sk-YourAPIKeyHere"
-PDF_PATH="backend/data/Review_SY-08002944_4_3_2025 10_31_21_cleaned.csv"
+KEY="AIzaSyA96Asr9ugSkJodajBd_v-yfCEoL6hzpfc"
+PDF_PATH="data/2025.01.14+-+CBC+(1)-ocr.pdf"
 genai.configure(api_key=KEY)
-model=genai.GenerativeModel('gemini-pro')
+model=genai.GenerativeModel('gemini-2.5-flash')
 
 def read_text(PDF_PATH):
     doc = fitz.open(PDF_PATH)
@@ -31,7 +31,8 @@ def extract_text():
     response = model.generate_content(prompt)
     print(response.text)
 
-    # Optional: save output
     with open("gemini_extracted.json", "w") as f:
         f.write(response.text)
 
+if __name__ == "__main__":
+    extract_text()

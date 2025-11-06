@@ -1,0 +1,726 @@
+```json
+[
+    {
+        "Patient ID": null,
+        "Sample ID": "4239",
+        "Test Date": "01-14-2025",
+        "Blood Metrics": {
+            "WBC": {
+                "value": 22.68,
+                "unit": "10^3/ul",
+                "flag": "H"
+            },
+            "Neu#": {
+                "value": 4.64,
+                "unit": "10^3/ul",
+                "flag": "H"
+            },
+            "Lym#": {
+                "value": 16.46,
+                "unit": "10^3/ul",
+                "flag": "H"
+            },
+            "Mon#": {
+                "value": 0.89,
+                "unit": "10^3/ul"
+            },
+            "Eos#": {
+                "value": 0.54,
+                "unit": "10^3/ul",
+                "flag": "H"
+            },
+            "Bas#": {
+                "value": 0.15,
+                "unit": "10^3/ul",
+                "flag": "H"
+            },
+            "Neu%": {
+                "value": 20.5,
+                "unit": "%"
+            },
+            "Lym%": {
+                "value": 72.6,
+                "unit": "%"
+            },
+            "Mon%": {
+                "value": 4.0,
+                "unit": "%"
+            },
+            "Eos%": {
+                "value": 2.3,
+                "unit": "%"
+            },
+            "Bas%": {
+                "value": 0.6,
+                "unit": "%"
+            },
+            "RBC": {
+                "value": 9.76,
+                "unit": "10^6/ul"
+            },
+            "HGB": {
+                "value": 15.2,
+                "unit": "g/dl"
+            },
+            "HCT": {
+                "value": 43.4,
+                "unit": "%"
+            },
+            "MCV": {
+                "value": 44.5,
+                "unit": "fl"
+            },
+            "MCH": {
+                "value": 15.6,
+                "unit": "pg"
+            },
+            "MCHC": {
+                "value": 35.0,
+                "unit": "g/dl"
+            },
+            "RDW-CV": {
+                "value": 15.3,
+                "unit": "%"
+            },
+            "PLT": {
+                "value": 1374.0,
+                "unit": "10^3/ul"
+            },
+            "MPV": {
+                "value": 5.2,
+                "unit": "fl"
+            }
+        }
+    },
+    {
+        "Patient ID": null,
+        "Sample ID": "4239",
+        "Test Date": "01-14-2025",
+        "Blood Metrics": {
+            "WBC": {
+                "value": 23.09,
+                "unit": "10^3/ul",
+                "flag": "H"
+            },
+            "Neu#": {
+                "value": 4.63,
+                "unit": "10^3/ul",
+                "flag": "H"
+            },
+            "Lym#": {
+                "value": 16.81,
+                "unit": "10^3/ul",
+                "flag": "H"
+            },
+            "Mon#": {
+                "value": 1.14,
+                "unit": "10^3/ul"
+            },
+            "Eos#": {
+                "value": 0.36,
+                "unit": "10^3/ul"
+            },
+            "Bas#": {
+                "value": 0.15,
+                "unit": "10^3/ul",
+                "flag": "H"
+            },
+            "Neu%": {
+                "value": 20.1,
+                "unit": "%"
+            },
+            "Lym%": {
+                "value": 72.8,
+                "unit": "%"
+            },
+            "Mon%": {
+                "value": 5.0,
+                "unit": "%"
+            },
+            "Eos%": {
+                "value": 1.5,
+                "unit": "%"
+            },
+            "Bas%": {
+                "value": 0.6,
+                "unit": "%"
+            },
+            "RBC": {
+                "value": 9.65,
+                "unit": "10^6/ul"
+            },
+            "HGB": {
+                "value": 16.0,
+                "unit": "g/dl"
+            },
+            "HCT": {
+                "value": 43.3,
+                "unit": "%"
+            },
+            "MCV": {
+                "value": 44.8,
+                "unit": "fl"
+            },
+            "MCH": {
+                "value": 16.6,
+                "unit": "pg"
+            },
+            "MCHC": {
+                "value": 37.0,
+                "unit": "g/dl",
+                "flag": "H"
+            },
+            "RDW-CV": {
+                "value": 14.8,
+                "unit": "%"
+            },
+            "PLT": {
+                "value": 1330.0,
+                "unit": "10^3/ul"
+            },
+            "MPV": {
+                "value": 5.1,
+                "unit": "fl"
+            }
+        }
+    },
+    {
+        "Patient ID": null,
+        "Sample ID": "4240",
+        "Test Date": "01-14-2025",
+        "Blood Metrics": {
+            "WBC": {
+                "value": 16.36,
+                "unit": "10^3/ul",
+                "flag": "H"
+            },
+            "Neu#": {
+                "value": 3.66,
+                "unit": "10^3/ul",
+                "flag": "H"
+            },
+            "Lym#": {
+                "value": 11.94,
+                "unit": "10^3/ul",
+                "flag": "H"
+            },
+            "Mon#": {
+                "value": 0.43,
+                "unit": "10^3/ul"
+            },
+            "Eos#": {
+                "value": 0.22,
+                "unit": "10^3/ul"
+            },
+            "Bas#": {
+                "value": 0.11,
+                "unit": "10^3/ul"
+            },
+            "Neu%": {
+                "value": 22.4,
+                "unit": "%"
+            },
+            "Lym%": {
+                "value": 73.0,
+                "unit": "%"
+            },
+            "Mon%": {
+                "value": 2.6,
+                "unit": "%"
+            },
+            "Eos%": {
+                "value": 1.3,
+                "unit": "%"
+            },
+            "Bas%": {
+                "value": 0.7,
+                "unit": "%"
+            },
+            "RBC": {
+                "value": 9.06,
+                "unit": "10^6/ul"
+            },
+            "HGB": {
+                "value": 14.4,
+                "unit": "g/dl"
+            },
+            "HCT": {
+                "value": 40.9,
+                "unit": "%"
+            },
+            "MCV": {
+                "value": 45.2,
+                "unit": "fl"
+            },
+            "MCH": {
+                "value": 15.9,
+                "unit": "pg"
+            },
+            "MCHC": {
+                "value": 35.2,
+                "unit": "g/dl"
+            },
+            "RDW-CV": {
+                "value": 15.2,
+                "unit": "%"
+            },
+            "PLT": {
+                "value": 1019.0,
+                "unit": "10^3/ul"
+            },
+            "MPV": {
+                "value": 5.5,
+                "unit": "fl"
+            }
+        }
+    },
+    {
+        "Patient ID": null,
+        "Sample ID": "4241",
+        "Test Date": "01-14-2025",
+        "Blood Metrics": {
+            "WBC": {
+                "value": 20.74,
+                "unit": "10^3/ul",
+                "flag": "H"
+            },
+            "Neu#": {
+                "value": 3.35,
+                "unit": "10^3/ul"
+            },
+            "Lym#": {
+                "value": 16.02,
+                "unit": "10^3/ul",
+                "flag": "H"
+            },
+            "Mon#": {
+                "value": 0.98,
+                "unit": "10^3/ul"
+            },
+            "Eos#": {
+                "value": 0.31,
+                "unit": "10^3/ul"
+            },
+            "Bas#": {
+                "value": 0.08,
+                "unit": "10^3/ul"
+            },
+            "Neu%": {
+                "value": 16.1,
+                "unit": "%"
+            },
+            "Lym%": {
+                "value": 77.3,
+                "unit": "%"
+            },
+            "Mon%": {
+                "value": 4.7,
+                "unit": "%"
+            },
+            "Eos%": {
+                "value": 1.5,
+                "unit": "%"
+            },
+            "Bas%": {
+                "value": 0.4,
+                "unit": "%"
+            },
+            "RBC": {
+                "value": 9.68,
+                "unit": "10^6/ul"
+            },
+            "HGB": {
+                "value": 15.2,
+                "unit": "g/dl"
+            },
+            "HCT": {
+                "value": 46.4,
+                "unit": "%"
+            },
+            "MCV": {
+                "value": 47.9,
+                "unit": "fl"
+            },
+            "MCH": {
+                "value": 15.7,
+                "unit": "pg"
+            },
+            "MCHC": {
+                "value": 32.8,
+                "unit": "g/dl"
+            },
+            "RDW-CV": {
+                "value": 15.6,
+                "unit": "%"
+            },
+            "PLT": {
+                "value": 1331.0,
+                "unit": "10^3/ul"
+            },
+            "MPV": {
+                "value": 5.2,
+                "unit": "fl"
+            }
+        }
+    },
+    {
+        "Patient ID": null,
+        "Sample ID": "4242",
+        "Test Date": "01-14-2025",
+        "Blood Metrics": {
+            "WBC": {
+                "value": 14.2,
+                "unit": "10^3/ul",
+                "flag": "H"
+            },
+            "Neu#": {
+                "value": 2.26,
+                "unit": "10^3/ul"
+            },
+            "Lym#": {
+                "value": 10.74,
+                "unit": "10^3/ul",
+                "flag": "H"
+            },
+            "Mon#": {
+                "value": 0.85,
+                "unit": "10^3/ul"
+            },
+            "Eos#": {
+                "value": 0.29,
+                "unit": "10^3/ul"
+            },
+            "Bas#": {
+                "value": 0.06,
+                "unit": "10^3/ul"
+            },
+            "Neu%": {
+                "value": 15.9,
+                "unit": "%"
+            },
+            "Lym%": {
+                "value": 75.7,
+                "unit": "%"
+            },
+            "Mon%": {
+                "value": 6.0,
+                "unit": "%"
+            },
+            "Eos%": {
+                "value": 2.0,
+                "unit": "%"
+            },
+            "Bas%": {
+                "value": 0.4,
+                "unit": "%"
+            },
+            "RBC": {
+                "value": 9.45,
+                "unit": "10^6/ul"
+            },
+            "HGB": {
+                "value": 14.9,
+                "unit": "g/dl"
+            },
+            "HCT": {
+                "value": 45.0,
+                "unit": "%"
+            },
+            "MCV": {
+                "value": 47.6,
+                "unit": "fl"
+            },
+            "MCH": {
+                "value": 15.7,
+                "unit": "pg"
+            },
+            "MCHC": {
+                "value": 33.0,
+                "unit": "g/dl"
+            },
+            "RDW-CV": {
+                "value": 14.4,
+                "unit": "%"
+            },
+            "PLT": {
+                "value": 1385.0,
+                "unit": "10^3/ul"
+            },
+            "MPV": {
+                "value": 5.0,
+                "unit": "fl"
+            }
+        }
+    },
+    {
+        "Patient ID": null,
+        "Sample ID": "4243",
+        "Test Date": "01-14-2025",
+        "Blood Metrics": {
+            "WBC": {
+                "value": 17.9,
+                "unit": "10^3/ul",
+                "flag": "H"
+            },
+            "Neu#": {
+                "value": 4.5,
+                "unit": "10^3/ul",
+                "flag": "H"
+            },
+            "Lym#": {
+                "value": 11.96,
+                "unit": "10^3/ul",
+                "flag": "H"
+            },
+            "Mon#": {
+                "value": 1.09,
+                "unit": "10^3/ul"
+            },
+            "Eos#": {
+                "value": 0.22,
+                "unit": "10^3/ul"
+            },
+            "Bas#": {
+                "value": 0.13,
+                "unit": "10^3/ul",
+                "flag": "H"
+            },
+            "Neu%": {
+                "value": 25.2,
+                "unit": "%"
+            },
+            "Lym%": {
+                "value": 66.8,
+                "unit": "%"
+            },
+            "Mon%": {
+                "value": 6.1,
+                "unit": "%"
+            },
+            "Eos%": {
+                "value": 1.2,
+                "unit": "%"
+            },
+            "Bas%": {
+                "value": 0.7,
+                "unit": "%"
+            },
+            "RBC": {
+                "value": 9.07,
+                "unit": "10^6/ul"
+            },
+            "HGB": {
+                "value": 14.2,
+                "unit": "g/dl"
+            },
+            "HCT": {
+                "value": 40.7,
+                "unit": "%"
+            },
+            "MCV": {
+                "value": 44.9,
+                "unit": "fl"
+            },
+            "MCH": {
+                "value": 15.6,
+                "unit": "pg"
+            },
+            "MCHC": {
+                "value": 34.8,
+                "unit": "g/dl"
+            },
+            "RDW-CV": {
+                "value": 15.3,
+                "unit": "%"
+            },
+            "PLT": {
+                "value": 1566.0,
+                "unit": "10^3/ul"
+            },
+            "MPV": {
+                "value": 5.2,
+                "unit": "fl"
+            }
+        }
+    },
+    {
+        "Patient ID": null,
+        "Sample ID": "4245",
+        "Test Date": "01-14-2025",
+        "Blood Metrics": {
+            "WBC": {
+                "value": 20.3,
+                "unit": "10^3/ul",
+                "flag": "H"
+            },
+            "Neu#": {
+                "value": 5.47,
+                "unit": "10^3/ul",
+                "flag": "H"
+            },
+            "Lym#": {
+                "value": 13.18,
+                "unit": "10^3/ul",
+                "flag": "H"
+            },
+            "Mon#": {
+                "value": 1.25,
+                "unit": "10^3/ul"
+            },
+            "Eos#": {
+                "value": 0.27,
+                "unit": "10^3/ul"
+            },
+            "Bas#": {
+                "value": 0.13,
+                "unit": "10^3/ul",
+                "flag": "H"
+            },
+            "Neu%": {
+                "value": 27.0,
+                "unit": "%"
+            },
+            "Lym%": {
+                "value": 65.0,
+                "unit": "%"
+            },
+            "Mon%": {
+                "value": 6.1,
+                "unit": "%"
+            },
+            "Eos%": {
+                "value": 1.3,
+                "unit": "%"
+            },
+            "Bas%": {
+                "value": 0.6,
+                "unit": "%"
+            },
+            "RBC": {
+                "value": 9.54,
+                "unit": "10^6/ul"
+            },
+            "HGB": {
+                "value": 14.9,
+                "unit": "g/dl"
+            },
+            "HCT": {
+                "value": 43.1,
+                "unit": "%"
+            },
+            "MCV": {
+                "value": 45.2,
+                "unit": "fl"
+            },
+            "MCH": {
+                "value": 15.6,
+                "unit": "pg"
+            },
+            "MCHC": {
+                "value": 34.5,
+                "unit": "g/dl"
+            },
+            "RDW-CV": {
+                "value": 15.4,
+                "unit": "%"
+            },
+            "PLT": {
+                "value": 1561.0,
+                "unit": "10^3/ul"
+            },
+            "MPV": {
+                "value": 5.2,
+                "unit": "fl"
+            }
+        }
+    },
+    {
+        "Patient ID": null,
+        "Sample ID": "4244",
+        "Test Date": "01-14-2025",
+        "Blood Metrics": {
+            "WBC": {
+                "value": 11.43,
+                "unit": "10^3/ul",
+                "flag": "H"
+            },
+            "Neu#": {
+                "value": 2.12,
+                "unit": "10^3/ul"
+            },
+            "Lym#": {
+                "value": 8.59,
+                "unit": "10^3/ul"
+            },
+            "Mon#": {
+                "value": 0.47,
+                "unit": "10^3/ul"
+            },
+            "Eos#": {
+                "value": 0.18,
+                "unit": "10^3/ul"
+            },
+            "Bas#": {
+                "value": 0.07,
+                "unit": "10^3/ul"
+            },
+            "Neu%": {
+                "value": 18.5,
+                "unit": "%"
+            },
+            "Lym%": {
+                "value": 75.2,
+                "unit": "%"
+            },
+            "Mon%": {
+                "value": 4.1,
+                "unit": "%"
+            },
+            "Eos%": {
+                "value": 1.6,
+                "unit": "%"
+            },
+            "Bas%": {
+                "value": 0.6,
+                "unit": "%"
+            },
+            "RBC": {
+                "value": 8.59,
+                "unit": "10^6/ul"
+            },
+            "HGB": {
+                "value": 13.7,
+                "unit": "g/dl"
+            },
+            "HCT": {
+                "value": 39.1,
+                "unit": "%"
+            },
+            "MCV": {
+                "value": 45.6,
+                "unit": "fl"
+            },
+            "MCH": {
+                "value": 15.9,
+                "unit": "pg"
+            },
+            "MCHC": {
+                "value": 34.9,
+                "unit": "g/dl"
+            },
+            "RDW-CV": {
+                "value": 14.1,
+                "unit": "%"
+            },
+            "PLT": {
+                "value": 1068.0,
+                "unit": "10^3/ul"
+            },
+            "MPV": {
+                "value": 5.0,
+                "unit": "fl"
+            }
+        }
+    }
+]
+```
