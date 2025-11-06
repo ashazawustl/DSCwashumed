@@ -61,11 +61,16 @@ UPLOAD_FOLDER = Path("temp_uploads")
 UPLOAD_FOLDER.mkdir(exist_ok=True)
 EXPORT_FOLDER = Path("../frontend/exports")
 EXPORT_FOLDER.mkdir(exist_ok=True)
+DATA_STORAGE = Path("processed_data")
+DATA_STORAGE.mkdir(exist_ok=True)
 
 # Enhanced configuration
 MAX_FILES_PER_BATCH = 50
 MAX_FILE_SIZE_MB = 50
 SUPPORTED_EXTENSIONS = ['.txt', '.csv', '.xlsx', '.xls', '.pdf', '.tif', '.tiff', '.png', '.jpeg', '.jpg', '.img', '.pxl', '.bmp']
+
+# In-memory storage for processed datasets (for demo - use database in production)
+PROCESSED_DATASETS = {}
 
 # Enhanced metadata extraction from filename
 def extract_metadata_from_filename(filename):
@@ -993,11 +998,36 @@ def process_dexa_files_enhanced():
         csv_path = EXPORT_FOLDER / csv_filename
         standardized_df.to_csv(csv_path, index=False)
         
-        print("Enhanced processing complete!")
+        # Store in backend database/storage for dashboard access
+        dataset_id = f"dataset_{timestamp}_{counter:02d}"
+        storage_path = DATA_STORAGE / f"{dataset_id}.csv"
+        standardized_df.to_csv(storage_path, index=False)
         
-        # Enhanced response with detailed statistics
+        # Store metadata for dashboard visualization
+        PROCESSED_DATASETS[dataset_id] = {
+            'id': dataset_id,
+            'filename': csv_filename,
+            'storage_path': str(storage_path),
+            'timestamp': timestamp,
+            'created_at': datetime.now().isoformat(),
+            'total_records': int(len(standardized_df)),
+            'batches': list(standardized_df['batch'].unique()),
+            'timepoints': list(standardized_df['timepoint_standardized'].unique()),
+            'subjects': int(standardized_df['subject_id'].nunique()),
+            'files_processed': int(processed_count),
+            'imputation_strategy': imputation_strategy
+        }
+        
+        print("Enhanced processing complete!")
+        print(f"Dataset stored with ID: {dataset_id}")
+        
+        # Prepare visualization data - convert DataFrame to records for frontend
+        data_records = standardized_df.to_dict('records')
+        
+        # Enhanced response with data directly embedded for frontend visualization
         response_data = {
             "status": "success",
+            "dataset_id": dataset_id,
             "processing_method": "enhanced_multi_file",
             "total_records": int(len(standardized_df)),
             "files_uploaded": int(len([f for f in files if f.filename != ''])),
@@ -1012,8 +1042,8 @@ def process_dexa_files_enhanced():
             "file_type_breakdown": file_type_stats,
             "imputation_strategy": imputation_strategy,
             "images_analyzed": int(standardized_df['has_image_data'].sum() if 'has_image_data' in standardized_df.columns else 0),
-            "csv_download_url": f"http://localhost:5001/api/download/{csv_filename}",
-            "csv_filename": csv_filename,
+            "columns": list(standardized_df.columns),
+            "data": data_records,  # Direct data for frontend visualization
             "supported_formats": SUPPORTED_EXTENSIONS,
             "processing_features": [
                 "Multi-file batch processing",
@@ -1097,12 +1127,172 @@ def health_check():
         "timestamp": datetime.now().isoformat()
     })
 
+@app.route('/api/datasets')
+def list_datasets():
+    """List all processed datasets available in the system."""
+    try:
+        datasets = []
+        for dataset_id, metadata in PROCESSED_DATASETS.items():
+            datasets.append(metadata)
+        
+        return jsonify({
+            "status": "success",
+            "total_datasets": len(datasets),
+            "datasets": datasets
+        })
+    except Exception as e:
+        return jsonify({"status": "error", "error": str(e)}), 500
+
+@app.route('/api/dashboard/<dataset_id>')
+def get_dashboard_data(dataset_id):
+    """Get processed data and statistics for dashboard visualization."""
+    try:
+        if dataset_id not in PROCESSED_DATASETS:
+            return jsonify({"status": "error", "error": "Dataset not found"}), 404
+        
+        metadata = PROCESSED_DATASETS[dataset_id]
+        storage_path = Path(metadata['storage_path'])
+        
+        if not storage_path.exists():
+            return jsonify({"status": "error", "error": "Data file not found"}), 404
+        
+        # Load the processed data
+        df = pd.read_csv(storage_path)
+        
+        # Generate dashboard statistics
+        dashboard_data = {
+            "dataset_info": metadata,
+            "statistics": {
+                "total_records": int(len(df)),
+                "total_subjects": int(df['subject_id'].nunique()),
+                "total_batches": int(df['batch'].nunique()),
+                "total_timepoints": int(df['timepoint_standardized'].nunique()),
+                "gender_distribution": df['gender'].value_counts().to_dict() if 'gender' in df.columns else {},
+                "batch_distribution": df['batch'].value_counts().to_dict(),
+                "timepoint_distribution": df['timepoint_standardized'].value_counts().to_dict()
+            },
+            "measurements": {
+                "bmd": {
+                    "mean": float(df['bmd'].mean()) if 'bmd' in df.columns else None,
+                    "std": float(df['bmd'].std()) if 'bmd' in df.columns else None,
+                    "min": float(df['bmd'].min()) if 'bmd' in df.columns else None,
+                    "max": float(df['bmd'].max()) if 'bmd' in df.columns else None
+                },
+                "bmc": {
+                    "mean": float(df['bmc'].mean()) if 'bmc' in df.columns else None,
+                    "std": float(df['bmc'].std()) if 'bmc' in df.columns else None,
+                    "min": float(df['bmc'].min()) if 'bmc' in df.columns else None,
+                    "max": float(df['bmc'].max()) if 'bmc' in df.columns else None
+                },
+                "total_weight": {
+                    "mean": float(df['total_weight'].mean()) if 'total_weight' in df.columns else None,
+                    "std": float(df['total_weight'].std()) if 'total_weight' in df.columns else None,
+                    "min": float(df['total_weight'].min()) if 'total_weight' in df.columns else None,
+                    "max": float(df['total_weight'].max()) if 'total_weight' in df.columns else None
+                }
+            },
+            "data_preview": df.head(10).to_dict(orient='records')
+        }
+        
+        return jsonify({
+            "status": "success",
+            "data": dashboard_data
+        })
+        
+    except Exception as e:
+        app.logger.error(f"Error generating dashboard data: {e}")
+        return jsonify({"status": "error", "error": str(e)}), 500
+
+@app.route('/api/visualizations/<dataset_id>')
+def get_visualizations(dataset_id):
+    """Generate visualization data for charts and graphs."""
+    try:
+        if dataset_id not in PROCESSED_DATASETS:
+            return jsonify({"status": "error", "error": "Dataset not found"}), 404
+        
+        metadata = PROCESSED_DATASETS[dataset_id]
+        storage_path = Path(metadata['storage_path'])
+        
+        if not storage_path.exists():
+            return jsonify({"status": "error", "error": "Data file not found"}), 404
+        
+        df = pd.read_csv(storage_path)
+        
+        # Generate visualization data
+        visualizations = {
+            "bmd_by_timepoint": {},
+            "bmc_by_timepoint": {},
+            "weight_by_timepoint": {},
+            "batch_comparison": {},
+            "gender_comparison": {}
+        }
+        
+        # BMD by timepoint
+        if 'bmd' in df.columns and 'timepoint_standardized' in df.columns:
+            bmd_by_time = df.groupby('timepoint_standardized')['bmd'].agg(['mean', 'std', 'count']).to_dict()
+            visualizations['bmd_by_timepoint'] = {
+                'labels': list(bmd_by_time['mean'].keys()),
+                'values': [float(v) for v in bmd_by_time['mean'].values()],
+                'std_dev': [float(v) for v in bmd_by_time['std'].values()],
+                'counts': [int(v) for v in bmd_by_time['count'].values()]
+            }
+        
+        # BMC by timepoint
+        if 'bmc' in df.columns and 'timepoint_standardized' in df.columns:
+            bmc_by_time = df.groupby('timepoint_standardized')['bmc'].agg(['mean', 'std', 'count']).to_dict()
+            visualizations['bmc_by_timepoint'] = {
+                'labels': list(bmc_by_time['mean'].keys()),
+                'values': [float(v) for v in bmc_by_time['mean'].values()],
+                'std_dev': [float(v) for v in bmc_by_time['std'].values()],
+                'counts': [int(v) for v in bmc_by_time['count'].values()]
+            }
+        
+        # Weight by timepoint
+        if 'total_weight' in df.columns and 'timepoint_standardized' in df.columns:
+            weight_by_time = df.groupby('timepoint_standardized')['total_weight'].agg(['mean', 'std', 'count']).to_dict()
+            visualizations['weight_by_timepoint'] = {
+                'labels': list(weight_by_time['mean'].keys()),
+                'values': [float(v) for v in weight_by_time['mean'].values()],
+                'std_dev': [float(v) for v in weight_by_time['std'].values()],
+                'counts': [int(v) for v in weight_by_time['count'].values()]
+            }
+        
+        # Batch comparison
+        if 'bmd' in df.columns and 'batch' in df.columns:
+            batch_comp = df.groupby('batch')['bmd'].agg(['mean', 'std', 'count']).to_dict()
+            visualizations['batch_comparison'] = {
+                'labels': list(batch_comp['mean'].keys()),
+                'bmd_mean': [float(v) for v in batch_comp['mean'].values()],
+                'bmd_std': [float(v) for v in batch_comp['std'].values()],
+                'counts': [int(v) for v in batch_comp['count'].values()]
+            }
+        
+        # Gender comparison
+        if 'bmd' in df.columns and 'gender' in df.columns:
+            gender_comp = df.groupby('gender')['bmd'].agg(['mean', 'std', 'count']).to_dict()
+            visualizations['gender_comparison'] = {
+                'labels': list(gender_comp['mean'].keys()),
+                'bmd_mean': [float(v) for v in gender_comp['mean'].values()],
+                'bmd_std': [float(v) for v in gender_comp['std'].values()],
+                'counts': [int(v) for v in gender_comp['count'].values()]
+            }
+        
+        return jsonify({
+            "status": "success",
+            "dataset_id": dataset_id,
+            "visualizations": visualizations
+        })
+        
+    except Exception as e:
+        app.logger.error(f"Error generating visualizations: {e}")
+        return jsonify({"status": "error", "error": str(e)}), 500
+
 @app.route('/')
 def index():
     """Enhanced API information page."""
     return f"""
     <h1>Enhanced DEXA Data Processing API</h1>
-    <p><strong>Advanced multi-file processing with intelligent data cleaning and smart imputation</strong></p>
+    <p><strong>Advanced multi-file processing with intelligent data cleaning and dashboard integration</strong></p>
     
     <h3>Enhanced Features:</h3>
     <ul>
@@ -1110,14 +1300,18 @@ def index():
         <li><strong>Flexible File Types</strong>: Support for {', '.join(SUPPORTED_EXTENSIONS)}</li>
         <li><strong>Smart Data Cleaning</strong>: Automatic removal of test data, outliers, and invalid measurements</li>
         <li><strong>Advanced Imputation</strong>: Multiple strategies for handling missing data</li>
-        <li><strong>Unified Format</strong>: Standardized timepoint and batch naming across all sources</li>
+        <li><strong>Dashboard Integration</strong>: Processed data stored for visualization and analysis</li>
+        <li><strong>Real-time Visualizations</strong>: Automatic chart generation for BMD, BMC, and weight trends</li>
         <li><strong>Enhanced Error Handling</strong>: Detailed error messages and processing warnings</li>
     </ul>
     
     <h3>API Endpoints:</h3>
     <ul>
-        <li><strong>POST /api/process-dexa</strong> - Enhanced multi-file DEXA processing</li>
-        <li><strong>GET /api/download/&lt;filename&gt;</strong> - Download processed files</li>
+        <li><strong>POST /api/process-dexa</strong> - Enhanced multi-file DEXA processing (stores in backend)</li>
+        <li><strong>GET /api/datasets</strong> - List all processed datasets</li>
+        <li><strong>GET /api/dashboard/&lt;dataset_id&gt;</strong> - Get dashboard data and statistics</li>
+        <li><strong>GET /api/visualizations/&lt;dataset_id&gt;</strong> - Get visualization data for charts</li>
+        <li><strong>GET /api/download/&lt;filename&gt;</strong> - Download processed files (optional)</li>
         <li><strong>GET /api/health</strong> - Enhanced health check with system info</li>
     </ul>
     
@@ -1131,10 +1325,16 @@ def index():
         <li><code>smart</code> - Adaptive strategy based on data characteristics</li>
     </ul>
     
-    <h3>Output Format:</h3>
-    <p>Unified CSV with standardized columns and comprehensive metadata</p>
+    <h3>Dashboard Features:</h3>
+    <ul>
+        <li>Real-time BMD/BMC trends by timepoint</li>
+        <li>Batch comparison visualizations</li>
+        <li>Gender distribution analysis</li>
+        <li>Subject-level tracking</li>
+        <li>Data quality metrics</li>
+    </ul>
     
-    <p><em>Enhanced DEXA Processor v2.0 - Built for production-scale data processing</em></p>
+    <p><em>Enhanced DEXA Processor v2.0 - Built for production-scale data processing with dashboard integration</em></p>
     """
 
 if __name__ == '__main__':

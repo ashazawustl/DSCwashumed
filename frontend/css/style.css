@@ -1,37 +1,561 @@
-
-
 /**** ADD YOUR STYLES ****/
-
-
-/****************/
-/*   BAR-CHART  */
-/****************/
-
 .bar {
-  fill: #3C948B;
+	fill: #3C948B;
 }
 
 .bar:hover {
-  fill: #327972;
+	fill: #327972;
 }
 
 .axis {
-  font: 10px sans-serif;
+	font: 10px sans-serif;
 }
 
 .axis path,
 .axis line,
 .domain {
-  fill: none;
-  stroke: #888;
-  shape-rendering: crispEdges;
+	fill: none;
+	stroke: #888;
+	shape-rendering: crispEdges;
 }
 
 #chart-area text {
-  font-size: 11px;
+	font-size: 11px;
 }
 
 .axis-label {
-  fill: #888;
-  font-size: 10px;
+	fill: #888;
+	font-size: 10px;
+}
+
+/* css/style.css
+   Cute pastel theme for "Bio Research Data Visualization"
+   Drop this file into css/style.css and refresh the page.
+*/
+
+/* Optional: if you want a Google font, add this line to your HTML <head>:
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+*/
+
+/* General layout */
+body {
+	background: radial-gradient(circle at center, #81e0e9, #106268);
+	color: #fff;
+	font-family: 'Helvetica Neue', sans-serif;
+	margin: 0;
+	overflow: hidden;
+}
+
+.container {
+	text-align: center;
+	position: relative;
+}
+
+h1 {
+	font-size: 1.8em;
+	color: #ffffff;
+	margin: 20px auto;
+	padding-bottom: 10px;
+	border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+	display: inline-block;
+}
+
+/* SVG area styling */
+#chart-area svg {
+	display: block;
+	margin: 0 auto;
+	background: transparent;
+}
+
+/* Slide-in data panel */
+#data-panel {
+	position: fixed;
+	top: 0;
+	right: -420px;
+	/* hidden offscreen */
+	width: 400px;
+	height: 100vh;
+	background: rgba(25, 25, 25, 0.98);
+	box-shadow: -4px 0 25px rgba(0, 0, 0, 0.4);
+	overflow-y: auto;
+	transition: right 0.4s ease;
+	z-index: 999;
+	color: white;
+	border-left: 2px solid #3C948B;
+}
+
+#data-panel.active {
+	right: 0;
+	/* slides in */
+}
+
+#panel-content {
+	padding: 25px;
+	position: relative;
+}
+
+#close-panel {
+	position: absolute;
+	right: 20px;
+	top: 10px;
+	font-size: 28px;
+	color: #bbb;
+	cursor: pointer;
+	transition: color 0.3s;
+}
+
+#close-panel:hover {
+	color: #fff;
+}
+
+/* Table styling */
+#data-content h3 {
+	color: #ffe066;
+	text-align: center;
+	margin-bottom: 10px;
+}
+
+#data-content table {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 0.9em;
+}
+
+#data-content td {
+	padding: 6px 8px;
+	border-bottom: 1px solid #333;
+}
+
+#data-content tr:nth-child(even) {
+	background-color: rgba(255, 255, 255, 0.05);
+}
+
+#data-content tr:hover {
+	background-color: rgba(60, 148, 139, 0.2);
+}
+
+#data-content .section-header {
+	background: #3C948B;
+	font-weight: bold;
+	color: #fff;
+	text-align: left;
+	padding: 8px;
+}
+
+/* Scrollbar style */
+#data-panel::-webkit-scrollbar {
+	width: 8px;
+}
+
+#data-panel::-webkit-scrollbar-thumb {
+	background-color: #3C948B;
+	border-radius: 4px;
+}
+
+
+#dexa-upload-btn {
+	background-color: #007bff;
+	color: white;
+	border: none;
+	padding: 10px 20px;
+	border-radius: 6px;
+	cursor: pointer;
+	font-size: 1rem;
+	transition: background-color 0.3s ease;
+}
+
+#dexa-upload-btn:hover {
+	background-color: #0056b3;
+}
+
+#stats-tests-btn {
+	background-color: #007bff;
+	color: white;
+	border: none;
+	padding: 10px 20px;
+	border-radius: 6px;
+	cursor: pointer;
+	font-size: 1rem;
+	transition: background-color 0.3s ease;
+}
+
+#stats-tests-btn:hover {
+	background-color: #0056b3;
+}
+
+#filter-controls {
+	background-color: #222;
+	color: white;
+	padding: 10px;
+	border-radius: 8px;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 10px;
+}
+
+#filter-controls select,
+#filter-controls input,
+#filter-controls button {
+	border-radius: 4px;
+	padding: 4px 8px;
+	font-size: 0.9rem;
+}
+
+/* DEXA Upload Modal Overlay */
+.dexa-modal {
+	display: none;
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 10000;
+}
+
+.dexa-modal.active {
+	display: block;
+}
+
+.dexa-modal-overlay {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(0, 0, 0, 0.5);
+	backdrop-filter: blur(8px);
+}
+
+.dexa-modal-content {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 90%;
+	max-width: 700px;
+	max-height: 90vh;
+	overflow-y: auto;
+	background: rgba(255, 255, 255, 0.98);
+	backdrop-filter: blur(20px);
+	border-radius: 20px;
+	padding: 40px;
+	box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+	animation: slideUp 0.4s ease-out;
+}
+
+@keyframes slideUp {
+	from {
+		opacity: 0;
+		transform: translate(-50%, -40%);
+	}
+	to {
+		opacity: 1;
+		transform: translate(-50%, -50%);
+	}
+}
+
+.dexa-close-btn {
+	position: absolute;
+	top: 15px;
+	right: 15px;
+	background: transparent;
+	border: none;
+	font-size: 28px;
+	color: #666;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	z-index: 1;
+}
+
+.dexa-close-btn:hover {
+	color: #3C948B;
+	transform: rotate(90deg);
+}
+
+.dexa-header {
+	text-align: center;
+	margin-bottom: 30px;
+}
+
+.dexa-header h2 {
+	color: #3C948B;
+	font-size: 2rem;
+	margin-bottom: 10px;
+}
+
+.dexa-header p {
+	color: #666;
+	font-size: 0.95rem;
+}
+
+/* Upload Zone */
+.dexa-upload-zone {
+	border: 3px dashed #3C948B;
+	border-radius: 15px;
+	padding: 50px 20px;
+	text-align: center;
+	cursor: pointer;
+	transition: all 0.3s ease;
+	background: linear-gradient(135deg, rgba(60, 148, 139, 0.05), rgba(50, 121, 114, 0.05));
+	margin-bottom: 20px;
+}
+
+.dexa-upload-zone:hover {
+	border-color: #327972;
+	background: linear-gradient(135deg, rgba(60, 148, 139, 0.1), rgba(50, 121, 114, 0.1));
+	transform: scale(1.02);
+}
+
+.dexa-upload-zone.dragover {
+	border-color: #2ecc71;
+	background: linear-gradient(135deg, rgba(46, 204, 113, 0.1), rgba(39, 174, 96, 0.1));
+	transform: scale(1.05);
+}
+
+.dexa-upload-icon {
+	font-size: 3.5rem;
+	display: block;
+	margin-bottom: 15px;
+}
+
+.dexa-upload-text {
+	font-size: 1.2rem;
+	color: #333;
+	font-weight: 600;
+	margin-bottom: 10px;
+}
+
+.dexa-upload-subtext {
+	color: #666;
+	font-size: 0.9rem;
+}
+
+.dexa-file-input {
+	display: none;
+}
+
+/* File List */
+.dexa-file-list {
+	max-height: 250px;
+	overflow-y: auto;
+	margin-bottom: 20px;
+	display: none;
+}
+
+.dexa-file-item {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 12px 15px;
+	background: linear-gradient(135deg, rgba(60, 148, 139, 0.08), rgba(50, 121, 114, 0.08));
+	border-radius: 8px;
+	margin-bottom: 8px;
+	transition: all 0.2s ease;
+}
+
+.dexa-file-item:hover {
+	background: linear-gradient(135deg, rgba(60, 148, 139, 0.15), rgba(50, 121, 114, 0.15));
+	transform: translateX(5px);
+}
+
+.dexa-file-name {
+	flex: 1;
+	font-weight: 500;
+	color: #333;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.dexa-file-size {
+	color: #666;
+	font-size: 0.85rem;
+	margin: 0 15px;
+}
+
+.dexa-remove-btn {
+	background: #e74c3c;
+	color: white;
+	border: none;
+	padding: 6px 12px;
+	border-radius: 5px;
+	cursor: pointer;
+	font-size: 0.85rem;
+	transition: all 0.2s ease;
+}
+
+.dexa-remove-btn:hover {
+	background: #c0392b;
+	transform: scale(1.05);
+}
+
+/* Process Button */
+.dexa-process-btn {
+	width: 100%;
+	padding: 15px;
+	background: linear-gradient(135deg, #3C948B, #327972);
+	color: white;
+	border: none;
+	border-radius: 10px;
+	font-size: 1.1rem;
+	font-weight: 600;
+	cursor: pointer;
+	transition: all 0.3s ease;
+	box-shadow: 0 5px 15px rgba(60, 148, 139, 0.4);
+}
+
+.dexa-process-btn:hover:not(:disabled) {
+	transform: translateY(-2px);
+	box-shadow: 0 8px 25px rgba(60, 148, 139, 0.6);
+}
+
+.dexa-process-btn:disabled {
+	background: linear-gradient(135deg, #ccc, #999);
+	cursor: not-allowed;
+	box-shadow: none;
+}
+
+/* Loading */
+.dexa-loading {
+	display: none;
+	text-align: center;
+	margin: 20px 0;
+}
+
+.dexa-spinner {
+	border: 4px solid rgba(60, 148, 139, 0.2);
+	border-top: 4px solid #3C948B;
+	border-radius: 50%;
+	width: 50px;
+	height: 50px;
+	animation: spin 1s linear infinite;
+	margin: 0 auto 15px;
+}
+
+@keyframes spin {
+	0% { transform: rotate(0deg); }
+	100% { transform: rotate(360deg); }
+}
+
+.dexa-loading p {
+	color: #3C948B;
+	font-weight: 600;
+}
+
+/* Results */
+.dexa-results {
+	display: none;
+	animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+	from { opacity: 0; }
+	to { opacity: 1; }
+}
+
+.dexa-stats-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+	gap: 12px;
+	margin-bottom: 20px;
+}
+
+.dexa-stat-card {
+	background: linear-gradient(135deg, #3C948B, #327972);
+	color: white;
+	padding: 18px;
+	border-radius: 12px;
+	text-align: center;
+	box-shadow: 0 5px 15px rgba(60, 148, 139, 0.3);
+	transition: all 0.3s ease;
+}
+
+.dexa-stat-card:hover {
+	transform: translateY(-5px);
+	box-shadow: 0 10px 25px rgba(60, 148, 139, 0.5);
+}
+
+.dexa-stat-number {
+	font-size: 2rem;
+	font-weight: bold;
+	margin-bottom: 5px;
+}
+
+.dexa-stat-label {
+	font-size: 0.85rem;
+	opacity: 0.9;
+}
+
+.dexa-success-msg {
+	background: linear-gradient(135deg, rgba(46, 204, 113, 0.1), rgba(39, 174, 96, 0.1));
+	border: 2px solid #2ecc71;
+	color: #27ae60;
+	padding: 15px;
+	border-radius: 10px;
+	text-align: center;
+	font-weight: 600;
+}
+
+/* Error */
+.dexa-error {
+	background: linear-gradient(135deg, #e74c3c, #c0392b);
+	color: white;
+	padding: 15px;
+	border-radius: 10px;
+	margin-bottom: 15px;
+	display: none;
+	animation: shake 0.5s ease;
+}
+
+@keyframes shake {
+	0%, 100% { transform: translateX(0); }
+	25% { transform: translateX(-10px); }
+	75% { transform: translateX(10px); }
+}
+
+/* Scrollbar */
+.dexa-modal-content::-webkit-scrollbar,
+.dexa-file-list::-webkit-scrollbar {
+	width: 8px;
+}
+
+.dexa-modal-content::-webkit-scrollbar-track,
+.dexa-file-list::-webkit-scrollbar-track {
+	background: #f1f1f1;
+	border-radius: 10px;
+}
+
+.dexa-modal-content::-webkit-scrollbar-thumb,
+.dexa-file-list::-webkit-scrollbar-thumb {
+	background: #3C948B;
+	border-radius: 10px;
+}
+
+.dexa-modal-content::-webkit-scrollbar-thumb:hover,
+.dexa-file-list::-webkit-scrollbar-thumb:hover {
+	background: #327972;
+}
+
+/* Notification Animations */
+@keyframes slideInRight {
+	from {
+		transform: translateX(400px);
+		opacity: 0;
+	}
+	to {
+		transform: translateX(0);
+		opacity: 1;
+	}
+}
+
+@keyframes slideOutRight {
+	from {
+		transform: translateX(0);
+		opacity: 1;
+	}
+	to {
+		transform: translateX(400px);
+		opacity: 0;
+	}
 }
